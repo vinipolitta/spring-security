@@ -2,6 +2,7 @@ package br.com.forum_hub.domain.resposta;
 
 import br.com.forum_hub.domain.topico.Status;
 import br.com.forum_hub.domain.topico.TopicoService;
+import br.com.forum_hub.domain.usuario.Usuario;
 import br.com.forum_hub.infra.exception.RegraDeNegocioException;
 import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
@@ -18,8 +19,9 @@ public class RespostaService {
         this.topicoService = topicoService;
     }
 
+
     @Transactional
-    public Resposta cadastrar(DadosCadastroResposta dados, Long idTopico) {
+    public Resposta cadastrar(DadosCadastroResposta dados, Long idTopico, Usuario autor) {
         var topico = topicoService.buscarPeloId(idTopico);
 
         if(!topico.estaAberto()) {
@@ -32,9 +34,10 @@ public class RespostaService {
 
         topico.incrementarRespostas();
 
-        var resposta = new Resposta(dados, topico);
+        var resposta = new Resposta(dados, topico, autor);
         return repository.save(resposta);
     }
+
 
     @Transactional
     public Resposta atualizar(DadosAtualizacaoResposta dados) {
