@@ -1,19 +1,19 @@
 package br.com.forum_hub.domain.usuario;
+
+import br.com.forum_hub.domain.perfil.Perfil;
 import br.com.forum_hub.infra.exception.RegraDeNegocioException;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 import java.util.UUID;
 
 @Entity
-@Table(name="usuarios")
+@Table(name = "usuarios")
 public class Usuario implements UserDetails {
 
     @Id
@@ -30,10 +30,19 @@ public class Usuario implements UserDetails {
     private LocalDateTime expiracaoToken;
     private Boolean ativo;
 
-    @Deprecated
-    public Usuario(){}
+    @ManyToMany(fetch = FetchType.EAGER)
+    @JoinTable(
+            name = "usuarios_perfis",
+            joinColumns = @JoinColumn(name = "usuario_id"),
+            inverseJoinColumns = @JoinColumn(name = "perfil_id")
+    )
+    private List<Perfil> perfis = new ArrayList<>();
 
-    public Usuario(DadosCadastroUsuario dados, String senhaCriptografada) {
+    @Deprecated
+    public Usuario() {
+    }
+
+    public Usuario(DadosCadastroUsuario dados, String senhaCriptografada, Perfil perfil) {
         this.nomeCompleto = dados.nomeCompleto();
         this.email = dados.email();
         this.senha = senhaCriptografada;
@@ -44,11 +53,12 @@ public class Usuario implements UserDetails {
         this.token = UUID.randomUUID().toString();
         this.expiracaoToken = LocalDateTime.now().plusMinutes(30);
         this.ativo = false;
+        this.perfis.add(perfil);
     }
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return null;
+        return perfis;
     }
 
     @Override
@@ -86,7 +96,7 @@ public class Usuario implements UserDetails {
     }
 
     public void verificar() {
-        if(expiracaoToken.isBefore(LocalDateTime.now())){
+        if (expiracaoToken.isBefore(LocalDateTime.now())) {
             throw new RegraDeNegocioException("Link de verificação expirou!");
         }
         this.verificado = true;
@@ -100,13 +110,13 @@ public class Usuario implements UserDetails {
     }
 
     public Usuario alterarDados(DadosEdicaoUsuario dados) {
-        if(dados.nomeUsuario() != null){
+        if (dados.nomeUsuario() != null) {
             this.nomeUsuario = dados.nomeUsuario();
         }
-        if(dados.miniBiografia() != null){
+        if (dados.miniBiografia() != null) {
             this.miniBiografia = dados.miniBiografia();
         }
-        if(dados.biografia() != null){
+        if (dados.biografia() != null) {
             this.biografia = dados.biografia();
         }
         return this;
@@ -114,5 +124,13 @@ public class Usuario implements UserDetails {
 
     public void alterarSenha(String senhaCriptografada) {
         this.senha = senhaCriptografada;
+    }
+
+    public void adicionarPerfil(Perfil perfil) {
+        this.perfis.add(perfil);
+    }
+
+    public void removerPerfil(Perfil perfil) {
+        this.perfis.remove(perfil);
     }
 }
