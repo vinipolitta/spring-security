@@ -4,10 +4,8 @@ import br.com.forum_hub.domain.resposta.DadosListagemResposta;
 import br.com.forum_hub.domain.resposta.DadosCadastroResposta;
 import br.com.forum_hub.domain.resposta.DadosAtualizacaoResposta;
 import br.com.forum_hub.domain.resposta.RespostaService;
-import br.com.forum_hub.domain.usuario.Usuario;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
@@ -30,8 +28,8 @@ public class RespostaController {
     }
 
     @PostMapping
-    public ResponseEntity<DadosListagemResposta> cadastrar(@PathVariable Long idTopico, @RequestBody @Valid DadosCadastroResposta dados, UriComponentsBuilder uriBuilder, @AuthenticationPrincipal Usuario logado){
-        var resposta = service.cadastrar(dados, idTopico, logado);
+    public ResponseEntity<DadosListagemResposta> cadastrar(@PathVariable Long idTopico, @RequestBody @Valid DadosCadastroResposta dados, UriComponentsBuilder uriBuilder){
+        var resposta = service.cadastrar(dados, idTopico);
         var uri = uriBuilder.path("topicos/{idTopico}/respostas/{id}").buildAndExpand(resposta.getTopico().getId(), resposta.getId()).toUri();
         return ResponseEntity.created(uri).body(new DadosListagemResposta(resposta));
     }

@@ -23,9 +23,8 @@ public class Topico {
     private Long id;
     private String titulo;
     private String mensagem;
-
     @ManyToOne
-    @JoinColumn(name = "autor_id")
+    @JoinColumn(name="autor_id")
     private Usuario autor;
     private LocalDateTime dataCriacao;
     @Enumerated(EnumType.STRING)

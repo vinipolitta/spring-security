@@ -2,7 +2,6 @@ package br.com.forum_hub.domain.resposta;
 
 import br.com.forum_hub.domain.topico.Status;
 import br.com.forum_hub.domain.topico.Topico;
-import br.com.forum_hub.domain.usuario.Usuario;
 import br.com.forum_hub.infra.exception.RegraDeNegocioException;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -21,9 +20,7 @@ public class Resposta {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String mensagem;
-    @ManyToOne
-    @JoinColumn(name = "autor_id")
-    private Usuario autor;
+    private String autor;
     private LocalDateTime dataCriacao;
     private Boolean solucao;
 
@@ -34,9 +31,9 @@ public class Resposta {
     @Deprecated
     public Resposta(){}
 
-    public Resposta(DadosCadastroResposta dados, Topico topico, Usuario autor) {
+    public Resposta(DadosCadastroResposta dados, Topico topico) {
         this.mensagem = dados.mensagem();
-        this.autor = autor;
+        this.autor = dados.autor();
         this.dataCriacao = LocalDateTime.now();
         this.solucao = false;
         this.topico = topico;
@@ -50,7 +47,7 @@ public class Resposta {
         return mensagem;
     }
 
-    public Usuario getAutor() {
+    public String getAutor() {
         return autor;
     }
 

@@ -37,7 +37,7 @@ public class TopicoController {
     }
 
     @PostMapping
-    public ResponseEntity<DadosListagemTopico> cadastrar(@RequestBody @Valid DadosCadastroTopico dados, UriComponentsBuilder uriBuilder, @AuthenticationPrincipal Usuario autor) {
+    public ResponseEntity<DadosListagemTopico> cadastrar(@RequestBody @Valid DadosCadastroTopico dados, UriComponentsBuilder uriBuilder, @AuthenticationPrincipal Usuario autor){
         var topico = service.cadastrar(dados, autor);
         var uri = uriBuilder.path("/topicos/{id}").buildAndExpand(topico.getId()).toUri();
         return ResponseEntity.created(uri).body(new DadosListagemTopico(topico));
@@ -49,7 +49,7 @@ public class TopicoController {
             @RequestParam(required = false) String categoria,
             @RequestParam(required = false, name = "sem-resposta") Boolean semResposta,
             @RequestParam(required = false) Boolean solucionados,
-            @PageableDefault(size = 10, sort = {"dataCriacao"}) Pageable paginacao) {
+            @PageableDefault(size = 10, sort = {"dataCriacao"}) Pageable paginacao){
 
         var pagina = service.listar(categoria, curso, semResposta,
                 solucionados, paginacao);
@@ -57,26 +57,26 @@ public class TopicoController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<DadosDetalhesTopico> detalhar(@PathVariable Long id) {
+    public ResponseEntity<DadosDetalhesTopico> detalhar(@PathVariable Long id){
         var topico = service.buscarPeloId(id);
         var respostas = respostaService.buscarRespostasTopico(id);
         return ResponseEntity.ok(new DadosDetalhesTopico(topico, respostas));
     }
 
     @PutMapping
-    public ResponseEntity<DadosListagemTopico> atualizar(@RequestBody @Valid DadosAtualizacaoTopico dados) {
+    public ResponseEntity<DadosListagemTopico> atualizar(@RequestBody @Valid DadosAtualizacaoTopico dados){
         var topico = service.atualizar(dados);
         return ResponseEntity.ok(new DadosListagemTopico(topico));
     }
 
     @PatchMapping("/{id}")
-    public ResponseEntity<Void> fechar(@PathVariable Long id) {
+    public ResponseEntity<Void> fechar(@PathVariable Long id){
         service.fechar(id);
         return ResponseEntity.noContent().build();
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> excluir(@PathVariable Long id) {
+    public ResponseEntity<Void> excluir(@PathVariable Long id){
         service.excluir(id);
         return ResponseEntity.noContent().build();
     }
