@@ -32,7 +32,7 @@ public class ConfiguracoesSeguranca {
                 .authorizeHttpRequests(req -> req
                         // Permitir acesso público às seguintes URLs
                         .requestMatchers(
-                                "/login", "/atualizar-token", "/registrar", "/verificar-conta"
+                                "/login/**", "/atualizar-token", "/registrar", "/verificar-conta"
                         ).permitAll()
                         .requestMatchers(HttpMethod.GET, "/cursos").permitAll() // Permitir GET em /cursos
                         .requestMatchers(HttpMethod.GET, "/topicos/**").permitAll() // Permitir GET em /topicos/**
