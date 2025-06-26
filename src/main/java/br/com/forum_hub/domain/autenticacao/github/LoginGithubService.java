@@ -23,7 +23,7 @@ public class LoginGithubService {
         return "https://github.com/login/oauth/authorize" +
                 "?client_id=" + clientId +
                 "&redirect_uri=" + redirectUri +
-                "&scope=read:user:email,public_repo";
+                "&scope=read:user,user:email,public_repo";
     }
 
     private String obterToken(String code) {
@@ -54,7 +54,6 @@ public class LoginGithubService {
                 .accept(MediaType.APPLICATION_JSON)
                 .retrieve()
                 .body(String.class);
-
         System.out.println(repositorios);
 
         for (DadosEmail d : resposta) {
