@@ -12,14 +12,26 @@ import jakarta.persistence.Table;
 @Entity
 @Table(name = "cursos")
 public class Curso {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @Column(unique = true)
     private String nome;
+
     @Enumerated(EnumType.STRING)
     private Categoria categoria;
+
+    // Construtor padrão (obrigatório para o JPA)
+    public Curso() {
+    }
+
+    // Construtor usado no service para criar novo curso
+    public Curso(String nome, Categoria categoria) {
+        this.nome = nome;
+        this.categoria = categoria;
+    }
 
     public Long getId() {
         return id;
@@ -33,3 +45,5 @@ public class Curso {
         return categoria;
     }
 }
+
+

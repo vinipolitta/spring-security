@@ -23,6 +23,9 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.util.UriComponentsBuilder;
 
+import java.util.Collections;
+import java.util.List;
+
 @RestController
 public class UsuarioController {
 
@@ -80,5 +83,4 @@ public class UsuarioController {
         var usuario = usuarioService.removerPeril(id, dados);
         return ResponseEntity.ok(new DadosListagemUsuario(usuario));
     }
-
 }

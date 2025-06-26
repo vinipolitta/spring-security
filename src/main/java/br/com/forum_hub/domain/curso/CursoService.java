@@ -1,11 +1,9 @@
 package br.com.forum_hub.domain.curso;
 
 import br.com.forum_hub.infra.exception.RegraDeNegocioException;
-import jakarta.transaction.Transactional;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.RequestParam;
 
 @Service
 public class CursoService {
@@ -21,9 +19,14 @@ public class CursoService {
     }
 
     public Page<DadosCurso> listar(Categoria categoria, Pageable paginacao) {
-        if(categoria != null)
+        if (categoria != null)
             return repository.findByCategoria(categoria, paginacao).map(DadosCurso::new);
         return repository.findAll(paginacao).map(DadosCurso::new);
 
+    }
+
+    public Curso criar(DadosCurso dados) {
+        Curso curso = new Curso(dados.nome(), dados.categoria());
+        return repository.save(curso);
     }
 }

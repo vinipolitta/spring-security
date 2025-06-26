@@ -99,4 +99,5 @@ public class UsuarioService implements UserDetailsService {
         usuario.removerPerfil(perfil);
         return usuario;
     }
+
 }
