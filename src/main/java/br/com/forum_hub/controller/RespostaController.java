@@ -4,8 +4,10 @@ import br.com.forum_hub.domain.resposta.DadosListagemResposta;
 import br.com.forum_hub.domain.resposta.DadosCadastroResposta;
 import br.com.forum_hub.domain.resposta.DadosAtualizacaoResposta;
 import br.com.forum_hub.domain.resposta.RespostaService;
+import br.com.forum_hub.domain.usuario.Usuario;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
@@ -16,6 +18,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.util.UriComponentsBuilder;
+
+import java.nio.file.AccessDeniedException;
 
 @RestController
 @RequestMapping("topicos/{idTopico}/respostas")
@@ -35,20 +39,20 @@ public class RespostaController {
     }
 
     @PutMapping
-    public ResponseEntity<DadosListagemResposta> atualizar(@RequestBody @Valid DadosAtualizacaoResposta dados){
-        var resposta = service.atualizar(dados);
+    public ResponseEntity<DadosListagemResposta> atualizar(@RequestBody @Valid DadosAtualizacaoResposta dados, @AuthenticationPrincipal Usuario logado) throws AccessDeniedException {
+        var resposta = service.atualizar(dados, logado);
         return ResponseEntity.ok(new DadosListagemResposta(resposta));
     }
 
     @PatchMapping("/{id}")
-    public ResponseEntity<DadosListagemResposta> marcarComoSolucao(@PathVariable Long id){
-        var resposta = service.marcarComoSolucao(id);
+    public ResponseEntity<DadosListagemResposta> marcarComoSolucao(@PathVariable Long id, @AuthenticationPrincipal Usuario logado) throws AccessDeniedException {
+        var resposta = service.marcarComoSolucao(id, logado);
         return ResponseEntity.ok(new DadosListagemResposta(resposta));
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> excluir(@PathVariable Long id){
-        service.excluir(id);
+    public ResponseEntity<Void> excluir(@PathVariable Long id, @AuthenticationPrincipal Usuario logado) throws AccessDeniedException {
+        service.excluir(id, logado);
         return ResponseEntity.noContent().build();
     }
 }

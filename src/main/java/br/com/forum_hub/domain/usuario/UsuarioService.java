@@ -3,6 +3,7 @@ package br.com.forum_hub.domain.usuario;
 import br.com.forum_hub.domain.perfil.DadosPerfil;
 import br.com.forum_hub.domain.perfil.PerfilNome;
 import br.com.forum_hub.domain.perfil.PerfilRepository;
+import br.com.forum_hub.domain.resposta.HierarquiaService;
 import br.com.forum_hub.infra.email.EmailService;
 import br.com.forum_hub.infra.exception.RegraDeNegocioException;
 import jakarta.transaction.Transactional;
@@ -14,12 +15,18 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.nio.file.AccessDeniedException;
+
 @Service
 public class UsuarioService implements UserDetailsService {
 
     private final UsuarioRepository usuarioRepository;
     private final PasswordEncoder passwordEncoder;
     private final EmailService emailService;
+
+
+    @Autowired
+    private HierarquiaService hierarquiaService;
 
     @Autowired
     private PerfilRepository perfilRepository;
@@ -78,7 +85,13 @@ public class UsuarioService implements UserDetailsService {
     }
 
     @Transactional
-    public void desativarUsuario(Usuario usuario) {
+    public void desativarUsuario(Long id, Usuario logado) throws AccessDeniedException {
+        var usuario = usuarioRepository.findById(id).orElseThrow();
+
+        if (hierarquiaService.usuarioNaoTemPermissoes(logado, usuario, "ROLE_ADMIN")) {
+            throw new AccessDeniedException("Não é possivel realizar essa operação!");
+        }
+
         usuario.desativar();
     }
 
@@ -100,4 +113,9 @@ public class UsuarioService implements UserDetailsService {
         return usuario;
     }
 
+    @Transactional
+    public void reativarUsuario(Long id) {
+        var usuario = usuarioRepository.findById(id).orElseThrow();
+        usuario.reativar();
+    }
 }

@@ -41,10 +41,12 @@ public class ConfiguracoesSeguranca {
                         .requestMatchers(HttpMethod.POST, "/topicos").hasRole("ESTUDANTE")
                         .requestMatchers(HttpMethod.PUT, "/topicos").hasRole("ESTUDANTE")
                         .requestMatchers(HttpMethod.DELETE, "/topicos/**").hasRole("ESTUDANTE")
+                        .requestMatchers(HttpMethod.PATCH, "/topicos/{idTopico}/respostas/**").hasAnyRole("INSTRUTOR", "MODERADOR", "ESTUDANTE")
                         .requestMatchers(HttpMethod.PATCH, "/topicos/**").hasRole("MODERADOR")
 
                         // Apenas usuários com papel ADMIN podem acessar /adicionar-perfil/**
                         .requestMatchers(HttpMethod.PATCH, "/adicionar-perfil/**").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.PATCH, "/reativar-conta/**").hasRole("ADMIN")
 
                         // Qualquer outra requisição deve estar autenticada
                         .anyRequest().authenticated()

@@ -23,6 +23,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.util.UriComponentsBuilder;
 
+import java.nio.file.AccessDeniedException;
 import java.util.Collections;
 import java.util.List;
 
@@ -67,8 +68,8 @@ public class UsuarioController {
     }
 
     @DeleteMapping("/desativar")
-    public ResponseEntity<Void> banirUsuario(@AuthenticationPrincipal Usuario logado){
-        usuarioService.desativarUsuario(logado);
+    public ResponseEntity<Void> desativarUsuario(@PathVariable Long id, @AuthenticationPrincipal Usuario logado) throws AccessDeniedException {
+        usuarioService.desativarUsuario(id, logado);
         return ResponseEntity.noContent().build();
     }
 
@@ -82,5 +83,11 @@ public class UsuarioController {
     public ResponseEntity<DadosListagemUsuario> removerPerfil(@PathVariable Long id, @RequestBody @Valid DadosPerfil dados){
         var usuario = usuarioService.removerPeril(id, dados);
         return ResponseEntity.ok(new DadosListagemUsuario(usuario));
+    }
+
+    @PatchMapping("/reativar-conta/{id}")
+    public ResponseEntity<Void> reativarUsuario(@PathVariable Long id){
+        usuarioService.reativarUsuario(id);
+        return ResponseEntity.noContent().build();
     }
 }
