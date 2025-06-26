@@ -45,13 +45,30 @@ public class UsuarioService implements UserDetailsService {
 
     @Transactional
     public Usuario cadastrar(DadosCadastroUsuario dados) {
+        var usuario = criarUsuario(dados, false);
+        emailService.enviarEmailVerificacao(usuario);
+
+        return usuarioRepository.save(usuario);
+    }
+
+    @Transactional
+
+    public Usuario cadastrarVerificado(DadosCadastroUsuario dados) {
+
+        var usuario = criarUsuario(dados, true);
+
+        return usuarioRepository.save(usuario);
+
+    }
+
+    private Usuario criarUsuario(DadosCadastroUsuario dados, Boolean verificado) {
+
         var senhaCriptografada = passwordEncoder.encode(dados.senha());
 
         var perfil = perfilRepository.findByNome(PerfilNome.ESTUDANTE);
-        var usuario = new Usuario(dados, senhaCriptografada, perfil);
 
-        emailService.enviarEmailVerificacao(usuario);
-        return usuarioRepository.save(usuario);
+        return new Usuario(dados, senhaCriptografada, perfil, verificado);
+
     }
 
     @Transactional
